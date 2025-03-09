@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Устанавливаем необходимые пакеты
-apt update && apt install -y dante-server apache2-utils
+apt update && apt install -y dante-server apache2-utils qrencode
 
 # Определяем правильный сетевой интерфейс
 INTERFACE=$(ip route get 8.8.8.8 | awk -- '{print $5}' | head -n 1)
@@ -96,4 +96,13 @@ echo "============================================================="
 echo "Готовая строка для антидетект браузеров:"
 echo "$ip:$port:$username:$password"
 echo "$username:$password@$ip:$port"
+echo "============================================================="
+
+echo "Спасибо за использование скрипта! Вы можете оставить чаевые по QR-коду ниже:"
+qrencode -t ANSIUTF8 "https://pay.cloudtips.ru/p/7410814f"
+echo "Ссылка на чаевые: https://pay.cloudtips.ru/p/7410814f"
+echo "============================================================="
+echo "Рекомендуемые хостинги для VPN и прокси:"
+echo -e "\e]8;;https://vk.cc/ct29NQ\aХостинг #1: vk.cc/ct29NQ\e]8;;\a (промокод off60 для 60% скидки на первый месяц)"
+echo -e "\e]8;;https://vk.cc/czDwwy\aХостинг #2: vk.cc/czDwwy\e]8;;\a (будет действовать 15% бонус в течение 24 часов!)"
 echo "============================================================="
