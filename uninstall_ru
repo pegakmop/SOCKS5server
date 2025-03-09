@@ -1,0 +1,32 @@
+#!/bin/bash
+
+echo "Остановка службы danted..."
+systemctl stop danted
+systemctl disable danted
+
+echo "Удаление пакета dante-server..."
+apt remove --purge -y dante-server
+apt autoremove -y
+
+echo "Удаление конфигурационных файлов..."
+rm -f /etc/danted.conf
+rm -f /etc/pam.d/sockd
+rm -rf /var/run/danted.pid
+
+echo "Удаление пользователей, созданных для прокси..."
+getent passwd | grep -E 'proxyuser|danted' | cut -d: -f1 | xargs -r userdel -r
+
+echo "Очистка брандмауэра (если использовался UFW)..."
+PORT=$(grep "internal: 0.0.0.0 port" /etc/danted.conf | awk '{print $4}')
+if [ -n "$PORT" ]; then
+    ufw delete allow $PORT/tcp
+fi
+
+echo "Все компоненты удалены!"
+read -p "Хотите перезагрузить сервер? (y/n): " reboot_choice
+if [[ "$reboot_choice" == "y" || "$reboot_choice" == "Y" ]]; then
+    echo "Перезагрузка сервера..."
+    reboot
+else
+    echo "Перезагрузка отменена. Сервер работает без прокси."
+fi
